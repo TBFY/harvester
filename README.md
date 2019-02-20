@@ -21,9 +21,11 @@ Download articles and legal documents on public procurement.
 1. Run Solr and Banana by: `docker-compose up -d`
 1. You should be able to monitor the progress by: `docker-compose logs -f`
 1. A Solr web-admin site is available at: `http://localhost:8983/solr`
-1. Download and extract some [TED](ftp://ted.europa.eu/daily-packages/2019/02/) articles in `input/ted`
+1. Rename the configuration file: `src/test/resources/credentials.properties.sample` to `src/test/resources/credentials.properties` (*if you have credentials, update its content*) 
+1. Download and extract [TED](ftp://ted.europa.eu/daily-packages/2019/02/) articles in `input/ted`
 1. Run our harvester by: `./test TEDHarvester`
 1. A dashboard is available at: `http://localhost:8983/solr/banana`
 
 
 Take a look at all our harvesters here:  `src/test/java/harvest/`. 
+
