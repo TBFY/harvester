@@ -10,7 +10,6 @@ Download articles and legal documents on public procurement.
 
 ## Quick Start
 
-## Run locally
 1. Install [Docker](https://docs.docker.com/install/) and [Docker-Compose](https://docs.docker.com/compose/install/) 
 1. Clone this repo
 
@@ -22,7 +21,7 @@ Download articles and legal documents on public procurement.
 1. You should be able to monitor the progress by: `docker-compose logs -f`
 1. A Solr Admin site should be available at: [http://localhost:8983/solr](http://localhost:8983/solr)
 1. Rename the configuration file: `src/test/resources/credentials.properties.sample` to `src/test/resources/credentials.properties` (*if you have credentials, update its content*) 
-1. Download and extract [TED](ftp://ted.europa.eu/daily-packages/2019/02/) articles in `input/ted`
+1. Download and extract TED articles from [ftp://guest:guest@ted.europa.eu/daily-packages/](ftp://guest:guest@ted.europa.eu/daily-packages/) and save them at: `input/ted`
 1. Move into base directory and run our harvester by: `./test TEDHarvester`
 1. A dashboard with results should be available at: [http://localhost:8983/solr/banana](http://localhost:8983/solr/banana)
 
