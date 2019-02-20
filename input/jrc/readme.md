@@ -1,0 +1,4 @@
+- Collection of legislative texts from the European Union generated between years 1958 and 2006: https://ec.europa.eu/jrc/en/language-technologies/jrc-acquis
+- Available in xml format in 22 languages
+- Documents additionally are accompanied by information on the manually assigned Eurovoc subject domain classes so that the JRC-Acquis can also be used to train automatic multi-label classification software
+- Download site (by language): https://wt-public.emm4u.eu/Acquis/JRC-Acquis.3.0/corpus/
