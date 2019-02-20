@@ -1,5 +1,14 @@
 # Compiled class file
 *.class
+target
+src/test/docker/data
+
+# IDE files
+.idea
+*.iml
+
+# Private Files
+src/test/resources/credentials.properties
 
 # Log file
 *.log
