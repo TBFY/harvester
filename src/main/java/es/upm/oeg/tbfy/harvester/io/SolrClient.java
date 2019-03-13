@@ -8,6 +8,8 @@ import org.apache.solr.common.SolrInputDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -30,6 +32,64 @@ public class SolrClient {
     public void open(){
         this.solrClient = new HttpSolrClient.Builder(endpoint).build();
         this.counter = new AtomicInteger();
+    }
+
+    public Boolean update(String id, Map<String, Object> data) {
+        Boolean saved = false;
+        try{
+            SolrInputDocument sd = new SolrInputDocument();
+            sd.addField("id",id.replaceAll(" ",""));
+
+            for(Map.Entry<String,Object> entry : data.entrySet()){
+                String fieldName = entry.getKey();
+                Object td = entry.getValue();
+                Map<String,Object> updatedField = new HashMap<>();
+                updatedField.put("set", td);
+                sd.addField(fieldName, updatedField);
+            }
+
+            solrClient.add(sd);
+
+            LOG.info("[" + counter.incrementAndGet() + "] Document '" + id + "' saved");
+
+            if (counter.get() % 100 == 0){
+                LOG.info("Committing partial annotations["+ this.counter.get() +"]");
+                solrClient.commit();
+            }
+
+            saved = true;
+        }catch (Exception e){
+            LOG.error("Unexpected error annotating doc: " + id, e);
+        }
+        return saved;
+
+    }
+
+    public Boolean save(String id, Map<String, Object> data) {
+        Boolean saved = false;
+        try{
+            SolrInputDocument sd = new SolrInputDocument();
+            sd.addField("id",id.replaceAll(" ",""));
+
+            for(String fieldName : data.keySet()){
+                sd.addField(fieldName, data.get(fieldName));
+            }
+
+            solrClient.add(sd);
+
+            LOG.info("[" + counter.incrementAndGet() + "] Document '" + id + "' saved");
+
+            if (counter.get() % 100 == 0){
+                LOG.info("Committing partial annotations["+ this.counter.get() +"]");
+                solrClient.commit();
+            }
+
+            saved = true;
+        }catch (Exception e){
+            LOG.error("Unexpected error annotating doc: " + id, e);
+        }
+        return saved;
+
     }
 
     public boolean save(Document doc){
