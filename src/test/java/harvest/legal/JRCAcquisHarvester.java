@@ -2,6 +2,7 @@ package harvest.legal;
 
 import es.upm.oeg.tbfy.harvester.data.Document;
 import es.upm.oeg.tbfy.harvester.io.SolrClient;
+import es.upm.oeg.tbfy.harvester.utils.TextUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -87,19 +88,21 @@ public class JRCAcquisHarvester {
                             document.setSource("jrc");
                             document.setFormat("xml");
                             document.setLabels(Arrays.asList(xml.select("textClass").text().split(" ")));
-                            document.setName(xml.select("title").last().text());
+                            String title = xml.select("title").last().text();
+                            document.setName(TextUtils.unescapePercentageCoding(title));
                             document.setDate(xml.select("date").text());
 
                             Elements paragraphs = xml.select("p");
                             StringBuilder text = new StringBuilder();
                             for(Element paragraph : paragraphs){
-                                text.append(paragraph.text()).append("\n");
+                                String textValue = paragraph.text();
+                                text.append(TextUtils.unescapePercentageCoding(textValue)).append("\n");
                             }
                             document.setContent(text.toString());
 
                             solrClient.save(document);
 
-                            LOG.info("saved " + document + "-" + counter.incrementAndGet());
+                            LOG.debug("saved " + document + "-" + counter.incrementAndGet());
 
                         }catch (Exception e){
                             LOG.warn("Error parsing file: " + file.getAbsolutePath(), e);

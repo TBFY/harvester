@@ -3,6 +3,9 @@
 target
 src/test/docker/data
 
+# Corpora
+input/
+
 # IDE files
 .idea
 *.iml

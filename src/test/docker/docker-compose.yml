@@ -12,4 +12,4 @@ services:
       - solr-precreate
       - documents
     environment:
-      - SOLR_JAVA_MEM=-Xms10g -Xmx10g
+      - SOLR_JAVA_MEM=-Xms2g -Xmx2g
