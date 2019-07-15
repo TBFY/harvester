@@ -1,20 +1,18 @@
 package es.upm.oeg.tbfy.harvester.data;
 
-import com.google.common.base.Strings;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
+import java.util.List;
 
 /**
  * @author Badenes Olmedo, Carlos <cbadenes@fi.upm.es>
  */
 
-public class OCDS {
+public class TED {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OCDS.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TED.class);
 
     private String id;
 
@@ -22,15 +20,9 @@ public class OCDS {
 
     private String description;
 
-    private String cpv;
+    private List<String> cpv;
 
     private String buyer;
-
-    private Integer amount;
-
-    private String startDate;
-
-    private String endDate;
 
     private String language;
 
@@ -38,7 +30,7 @@ public class OCDS {
 
     private String source;
 
-    public OCDS() {
+    public TED() {
     }
 
     public String getId() {
@@ -65,11 +57,11 @@ public class OCDS {
         this.description = description;
     }
 
-    public String getCpv() {
+    public List<String> getCpv() {
         return cpv;
     }
 
-    public void setCpv(String cpv) {
+    public void setCpv(List<String> cpv) {
         this.cpv = cpv;
     }
 
@@ -79,30 +71,6 @@ public class OCDS {
 
     public void setBuyer(String buyer) {
         this.buyer = buyer;
-    }
-
-    public Integer getAmount() {
-        return amount;
-    }
-
-    public void setAmount(Integer amount) {
-        this.amount = amount;
-    }
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(String startDate) {
-        this.startDate = startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(String endDate) {
-        this.endDate = endDate;
     }
 
     public String getLanguage() {
@@ -135,18 +103,7 @@ public class OCDS {
         document.setName(this.title);
         document.setContent(this.description);
         document.setFormat(this.format);
-
-
-        String labels = Strings.isNullOrEmpty(cpv)? "" : cpv;
-        if (labels.contains(":")){
-            labels = StringUtils.substringAfter(cpv,":");
-        }
-
-        if (labels.contains(",")){
-            document.setLabels(Arrays.stream(labels.split(",")).map(t -> t.trim()).collect(Collectors.toList()));
-        }else{
-            document.setLabels(Arrays.asList(labels));
-        }
+        document.setLabels(cpv);
 
         document.setLanguage(this.language.toLowerCase().contains("-")? StringUtils.substringBefore(this.language,"-") : this.language );
         document.setSource(this.source);
@@ -155,9 +112,10 @@ public class OCDS {
 
     @Override
     public String toString() {
-        return "OCDS{" +
+        return "TED{" +
                 "id='" + id + '\'' +
                 ", title='" + title + '\'' +
+                ", cpv='" + cpv + '\'' +
                 '}';
     }
 }

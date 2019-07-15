@@ -1,8 +1,10 @@
 package harvest.tender;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
+import es.upm.oeg.tbfy.harvester.data.Document;
 import es.upm.oeg.tbfy.harvester.data.OCDS;
-import es.upm.oeg.tbfy.harvester.io.ApiRestClient;
+import es.upm.oeg.tbfy.harvester.data.TED;
+import es.upm.oeg.tbfy.harvester.io.OpenOppsRestClient;
 import es.upm.oeg.tbfy.harvester.io.SolrClient;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +13,9 @@ import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.Properties;
 
 /**
@@ -22,9 +26,6 @@ public class OOAPIHarvester {
 
     private static final Logger LOG = LoggerFactory.getLogger(OOAPIHarvester.class);
 
-    private static final String OPENOPPS_ENDPOINT   = "https://openopps.com/api/public";
-
-    private static final Integer MAX                = 1000;
 
     @Before
     public void setup() throws IOException {
@@ -37,17 +38,18 @@ public class OOAPIHarvester {
 
 
     @Test
-    public void execute() throws IOException {
+    public void retrieveContracts() throws IOException {
 
-        ApiRestClient restClient = new ApiRestClient(OPENOPPS_ENDPOINT, System.getProperty("token"));
-        SolrClient solrClient = new SolrClient(System.getProperty("solr.endpoint"));
+        OpenOppsRestClient restClient = new OpenOppsRestClient(System.getProperty("openopps.user"),System.getProperty("openopps.pwd"));
+//        SolrClient solrClient = new SolrClient(System.getProperty("solr.endpoint"));
 
         int page = 1;
-        int size = 10;
+        int size = 100;
         int count = 0;
+        int maxDocs = 1000;
 
-        ObjectMapper jsonMapper = new ObjectMapper();
-        solrClient.open();
+
+//        solrClient.open();
 
         LOG.info("Ready to harvest OpenOpps API");
         try{
@@ -55,18 +57,19 @@ public class OOAPIHarvester {
 
                 List<OCDS> ocdsList = restClient.getOCDS(page++, size);
 
-                jsonMapper.writeValueAsString(ocdsList.get(0));
-
                 boolean finish = false;
 
                 for(OCDS ocds : ocdsList){
 
                     // save to Solr
-                    solrClient.save(ocds.toDocument());
+                    Document doc = ocds.toDocument();
 
-                    LOG.info("Saved " + ocds);
+                    Integer dsize = Strings.isNullOrEmpty(doc.getContent())? 0 : doc.getContent().length();
+//                    solrClient.save(doc);
 
-                    if (MAX > 0 && ++count > MAX) {
+                    LOG.info("Saved " + ocds + "[" +dsize + "]");
+
+                    if (maxDocs > 0 && ++count > maxDocs) {
                         finish = true;
                         break;
                     }
@@ -78,7 +81,92 @@ public class OOAPIHarvester {
 
                 if (ocdsList.size() < size) break;
 
+                break;
+
             }
+        }finally {
+//            solrClient.close();
+        }
+        LOG.info("saved " + count + " documents");
+
+    }
+
+    @Test
+    public void retrieveTedArticles() throws IOException {
+
+        OpenOppsRestClient restClient = new OpenOppsRestClient(System.getProperty("openopps.user"),System.getProperty("openopps.pwd"));
+        SolrClient solrClient = new SolrClient("http://librairy.linkeddata.es/solr/documents");
+
+        int maxDocs     = 2000;
+        int minLength   = 1000;
+
+        solrClient.open();
+
+        try{
+
+            for (Integer year : Arrays.asList(2010,2011,2012,2013,2014)){
+
+                String gt = year + "-01-01";
+
+                String lt = ++year + "-01-01";
+
+                for(String lang : Arrays.asList("es")){
+                    int pageNumber  = 1;
+                    int pageSize    = 200;
+                    int count       = 0;
+
+                    LOG.info("Ready to harvest OpenOpps API in " + lang);
+                    while(count<maxDocs){
+
+                        List<TED> articles = restClient.getTED(pageNumber++, pageSize, Optional.of(lang), Optional.of(gt), Optional.of(lt));
+
+                        boolean finish = false;
+
+                        for(TED tedNew : articles){
+
+                            // save to Solr
+                            try{
+                                Document doc = tedNew.toDocument();
+
+                                Integer dsize = Strings.isNullOrEmpty(doc.getContent())? 0 : doc.getContent().length();
+                                if (dsize < minLength) continue;
+                                if (doc.getLabels() == null || doc.getLabels().isEmpty()) continue;
+
+                                solrClient.save(doc);
+                                LOG.info("Saved " + tedNew + "[" +dsize + "]");
+
+                                if (maxDocs > 0 && ++count > maxDocs) {
+                                    finish = true;
+                                    break;
+                                }
+                            }catch (Exception e){
+                                LOG.warn("Parsing error to Solr Document: " + e.getMessage());
+                            }
+                        }
+
+                        if (finish){
+                            LOG.info("finish true");
+                            break;
+                        }
+
+                        if (articles.isEmpty()) {
+                            LOG.info("articles empty");
+                            break;
+                        }
+
+                        if (articles.size() < pageSize){
+                            LOG.info("articles size");
+                            break;
+                        }
+
+
+                    }
+                    LOG.info("saved " + count + " documents in " + lang);
+                }
+
+            }
+
+
         }finally {
             solrClient.close();
         }

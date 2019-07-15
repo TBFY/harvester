@@ -3,15 +3,23 @@ package es.upm.oeg.tbfy.harvester.io;
 import com.google.common.base.Strings;
 import es.upm.oeg.tbfy.harvester.data.Document;
 import es.upm.oeg.tbfy.harvester.data.OCDS;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.apache.solr.common.SolrDocument;
+import org.apache.solr.common.SolrDocumentList;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.params.CursorMarkParams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+
+import static java.awt.SystemColor.window;
 
 /**
  * @author Badenes Olmedo, Carlos <cbadenes@fi.upm.es>
@@ -120,6 +128,24 @@ public class SolrClient {
 
         return true;
     }
+    
+    public SolrIterator query(String query, List<String> fields, Integer maxSize) throws IOException {
+        return new SolrIterator(query, fields, maxSize);
+    }
+
+    public Map<String,Object> get(String id, List<String> fields) throws IOException, SolrServerException {
+        SolrQuery solrQuery = new SolrQuery();
+        solrQuery.addField("id");
+        fields.forEach(f -> solrQuery.addField(f));
+        solrQuery.setQuery("id:"+id);
+        QueryResponse rsp = solrClient.query(solrQuery);
+        SolrDocumentList resultList = rsp.getResults();
+        Map<String,Object> data = new HashMap<>();
+        if (resultList.isEmpty()) return data;
+        SolrDocument result = resultList.get(0);
+        fields.forEach(f -> data.put(f, result.getFieldValue(f)));
+        return data;
+    }
 
     public void close(){
         try {
@@ -129,4 +155,74 @@ public class SolrClient {
         }
     }
 
+
+    public class SolrIterator{
+
+        private final Integer window = 500;
+        private final SolrQuery solrQuery;
+        private final Integer maxSize;
+        private final List<String> fields;
+        private String nextCursorMark;
+        private String cursorMark;
+        private SolrDocumentList solrDocList;
+        private AtomicInteger index;
+
+        public SolrIterator(String query, List<String> fields, Integer maxSize) throws IOException {
+            this.maxSize = maxSize;
+            this.fields = fields;
+            this.solrQuery = new SolrQuery();
+            solrQuery.setRows(window);
+            solrQuery.addField("id");
+            fields.forEach(f -> solrQuery.addField(f));
+            solrQuery.setQuery(query);
+            solrQuery.addSort("id", SolrQuery.ORDER.asc);
+            this.nextCursorMark = CursorMarkParams.CURSOR_MARK_START;
+            query();
+        }
+
+        private void query() throws IOException {
+            try{
+                this.cursorMark = nextCursorMark;
+                solrQuery.set(CursorMarkParams.CURSOR_MARK_PARAM, cursorMark);
+                QueryResponse rsp = solrClient.query(solrQuery);
+                this.nextCursorMark = rsp.getNextCursorMark();
+                this.solrDocList = rsp.getResults();
+                this.index = new AtomicInteger();
+            }catch (Exception e){
+                throw new IOException(e);
+            }
+        }
+
+        public Optional<Map<String,Object>> next(){
+            try{
+                if (index.get() >= solrDocList.size()) {
+                    if (index.get() < window){
+                        return Optional.empty();
+                    }
+                    query();
+                }
+
+                if (cursorMark.equals(nextCursorMark)) {
+                    return Optional.empty();
+                }
+
+                if ((maxSize > 0) && (index.get() > maxSize)){
+                    return Optional.empty();
+                }
+
+                SolrDocument solrDoc = solrDocList.get(index.getAndIncrement());
+
+                Map<String,Object> data = new HashMap<>();
+
+                data.put("id",solrDoc.getFieldValue("id"));
+                fields.forEach(f -> data.put(f, solrDoc.getFieldValue(f)));
+
+                return Optional.of(data);
+            }catch (Exception e){
+                LOG.error("Unexpected error on iterated list of solr docs",e);
+                if (e instanceof java.lang.IndexOutOfBoundsException) return Optional.empty();
+                return Optional.of(new HashMap<>());
+            }
+        }
+    }
 }

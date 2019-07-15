@@ -1,7 +1,10 @@
 package harvest.tender;
 
+import com.google.common.base.Strings;
 import es.upm.oeg.tbfy.harvester.data.Document;
 import es.upm.oeg.tbfy.harvester.io.SolrClient;
+import es.upm.oeg.tbfy.harvester.utils.ParallelExecutor;
+import es.upm.oeg.tbfy.harvester.utils.TextUtils;
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -19,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -40,7 +44,9 @@ public class TEDHarvester {
 
     private static final String PATH              = "input/ted";
 
-    private static final List<String> LANGUAGES   = Arrays.asList("en","es","fr","de","pt","it");
+    private static final List<String> LANGUAGES   = Arrays.asList("en","es","fr","de");
+
+    private static final Integer  MIN_LENGTH      = 1000;
 
     @Before
     public void setup() throws IOException {
@@ -58,7 +64,7 @@ public class TEDHarvester {
         try{
 
 
-            SolrClient solrClient = new SolrClient(System.getProperty("solr.endpoint"));
+            SolrClient solrClient = new SolrClient("http://librairy.linkeddata.es/solr/tbfy");
 
             solrClient.open();
 
@@ -66,6 +72,8 @@ public class TEDHarvester {
             SimpleDateFormat ISO8601DATEFORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
             AtomicInteger counter = new AtomicInteger();
+
+            ParallelExecutor executor = new ParallelExecutor();
 
             Iterator<Path> dirIterator = Files.newDirectoryStream(Paths.get(PATH), path -> path.toFile().isDirectory()).iterator();
 
@@ -82,60 +90,68 @@ public class TEDHarvester {
                     File file = path.toFile();
 
                     try{
-                        org.jsoup.nodes.Document xml = Jsoup.parse(file, "utf-8");
+                        final org.jsoup.nodes.Document xml = Jsoup.parse(file, "utf-8");
 
-                        for(String lang: LANGUAGES){
+                        executor.submit(() -> {
+                            try{
+                                String receptionId = xml.select("RECEPTION_ID").text();
 
-                            Document document = new Document();
+                                String dateVal = xml.select("DATE_PUB").text();
+                                Optional<Date> date = Optional.empty();
+                                if (!Strings.isNullOrEmpty(dateVal)) date = Optional.of(TEDDATEFORMAT.parse(dateVal));
 
-                            document.setId(xml.select("RECEPTION_ID").text()+"-"+lang);
-                            document.setLanguage(lang);
-                            document.setSource("ted");
-                            document.setFormat("xml");
+                                Elements forms = xml.select("FORM_SECTION").first().children();
 
-                            Elements cpvList = xml.select("ORIGINAL_CPV");
-                            List<String> labels = new ArrayList<>();
-                            for(Element cpv : cpvList){
-                                labels.add(cpv.attr("CODE"));
+                                for(Element form: forms){
+
+                                    Document document = new Document();
+
+                                    String lang = form.attr("LG").toLowerCase();
+
+                                    if (!LANGUAGES.contains(lang)) continue;
+
+                                    document.setId(receptionId+"-"+lang);
+                                    document.setLanguage(lang);
+                                    document.setSource("ted");
+                                    document.setFormat("xml");
+
+                                    Elements cpvList = form.select("CPV_CODE");
+                                    List<String> labels = new ArrayList<>();
+                                    for(Element cpv : cpvList){
+                                        labels.add(cpv.attr("CODE"));
+                                    }
+                                    document.setLabels(labels);
+
+                                    if (date.isPresent()) document.setDate(ISO8601DATEFORMAT.format(date.get()));
+
+                                    String title = form.select("TITLE").select("P").text();
+                                    if (Strings.isNullOrEmpty(title)){
+                                        String t = TextUtils.unescapePercentageCoding(form.select("title").text());
+                                        title = t.contains(">")? StringUtils.substringsBetween(t,">","<")[0] : t;
+                                    }
+                                    document.setName(title);
+                                    document.setContent(form.select("SHORT_DESCR").select("P").text());
+
+                                    String content = document.getContent();
+
+                                    if (Strings.isNullOrEmpty(content) || content.length() < MIN_LENGTH) return;
+
+                                    solrClient.save(document);
+
+                                    LOG.info("saved " + document + "-" + counter.incrementAndGet());
+
+                                }
+                            }catch (Exception e){
+                                LOG.error("Unexpected error",e);
                             }
-                            document.setLabels(labels);
-
-
-                            Date date = TEDDATEFORMAT.parse(xml.select("DATE_PUB").text());
-
-                            document.setDate(ISO8601DATEFORMAT.format(date));
-
-                            document.setName(xml.select("ML_TI_DOC[LG="+lang+"]").select("P").text());
-
-                            Elements body = xml.select("F02_2014[LG="+lang.toUpperCase()+"]").select("object_contract");
-
-                            Elements paragraphs = body.select("P");
-                            StringBuilder text = new StringBuilder();
-                            Map<String,Integer> memory = new HashMap<>();
-                            for(Element paragraph: paragraphs){
-                                String txt = paragraph.text();
-                                if (memory.containsKey(txt.replace(" ","_"))) continue;
-                                text.append(paragraph.text()).append("\n");
-                                memory.put(paragraph.text().replace(" ","_"),1);
-                            }
-
-                            document.setContent(text.toString());
-
-                            solrClient.save(document);
-
-                            LOG.info("saved " + document + "-" + counter.incrementAndGet());
-
-                        }
+                        });
                     }catch (Exception e){
                         LOG.warn("Error parsing file: " + file.getAbsolutePath(), e);
                     }
-
-
                 }
-
-
             }
 
+            executor.awaitTermination(1l, TimeUnit.HOURS);
 
             LOG.info(counter.get() + " objects saved");
 
