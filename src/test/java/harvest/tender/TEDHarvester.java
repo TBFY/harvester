@@ -67,7 +67,7 @@ public class TEDHarvester {
             solrClient.open();
 
             SimpleDateFormat TEDDATEFORMAT = new SimpleDateFormat("yyyyMMdd");
-            SimpleDateFormat ISO8601DATEFORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+            SimpleDateFormat ISO8601DATEFORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
             AtomicInteger counter = new AtomicInteger();
 
