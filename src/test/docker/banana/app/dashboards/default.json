@@ -50,12 +50,7 @@
                     "type": "query",
                     "label": "Search",
                     "history": [
-                        "size_i:[100 to 2000]",
-                        "size_i:[100 to 50000]",
                         "*:*",
-                        "size_i:[100 TO 1000]",
-                        "source_s:ted",
-                        "source_t:ted",
                         "labels_t:1309",
                         "labels_t:software_development",
                         "labels_t:_consulting",
@@ -100,7 +95,7 @@
                             "field": "id",
                             "decimalDigits": 0,
                             "label": "",
-                            "value": "673895"
+                            "value": "76142"
                         }
                     ],
                     "refresh": {
@@ -139,28 +134,28 @@
                             "field": "size_i",
                             "decimalDigits": 2,
                             "label": "min",
-                            "value": "0.00"
+                            "value": "100.00"
                         },
                         {
                             "type": "mean",
                             "field": "size_i",
                             "decimalDigits": 2,
                             "label": "mean",
-                            "value": "7297.72"
+                            "value": "3189.36"
                         },
                         {
                             "type": "max",
                             "field": "size_i",
                             "decimalDigits": 2,
                             "label": "max",
-                            "value": "35438564.00"
+                            "value": "90197.00"
                         },
                         {
                             "type": "stddev",
                             "field": "size_i",
                             "decimalDigits": 2,
                             "label": "stddev",
-                            "value": "71960.62"
+                            "value": "2316.63"
                         }
                     ],
                     "refresh": {
