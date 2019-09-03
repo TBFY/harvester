@@ -43,7 +43,7 @@ public class TEDHarvester {
 
     private static final Logger LOG = LoggerFactory.getLogger(TEDHarvester.class);
 
-    private static final String PATH              = "/Users/cbadenes/Desktop/ted-sample/harvester/input/ted";
+    private static final String PATH              = "input/ted";
 
     private static final List<String> LANGUAGES   = Arrays.asList("en","es","fr","de");
 

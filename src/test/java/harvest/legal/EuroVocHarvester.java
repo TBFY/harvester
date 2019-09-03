@@ -190,7 +190,7 @@ public class EuroVocHarvester {
     @Test
     public void retrieveLabelsFromRDF() throws IOException {
 
-        String file = "/Users/cbadenes/Downloads/eurovoc_in_skos_core_concepts.rdf";
+        String file = "input/eurovoc/eurovoc_in_skos_core_concepts.rdf";
         org.jsoup.nodes.Document xml = Jsoup.parse(new File(file), "utf-8");
 
 
