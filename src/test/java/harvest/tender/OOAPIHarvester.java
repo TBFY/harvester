@@ -41,7 +41,7 @@ public class OOAPIHarvester {
     public void retrieveContracts() throws IOException {
 
         OpenOppsRestClient restClient = new OpenOppsRestClient(System.getProperty("openopps.user"),System.getProperty("openopps.pwd"));
-//        SolrClient solrClient = new SolrClient(System.getProperty("solr.endpoint"));
+        SolrClient solrClient = new SolrClient(System.getProperty("solr.endpoint"));
 
         int page = 1;
         int size = 100;
@@ -49,7 +49,7 @@ public class OOAPIHarvester {
         int maxDocs = 1000;
 
 
-//        solrClient.open();
+        solrClient.open();
 
         LOG.info("Ready to harvest OpenOpps API");
         try{
@@ -65,7 +65,7 @@ public class OOAPIHarvester {
                     Document doc = ocds.toDocument();
 
                     Integer dsize = Strings.isNullOrEmpty(doc.getContent())? 0 : doc.getContent().length();
-//                    solrClient.save(doc);
+                    solrClient.save(doc);
 
                     LOG.info("Saved " + ocds + "[" +dsize + "]");
 
@@ -85,7 +85,7 @@ public class OOAPIHarvester {
 
             }
         }finally {
-//            solrClient.close();
+            solrClient.close();
         }
         LOG.info("saved " + count + " documents");
 
@@ -95,7 +95,7 @@ public class OOAPIHarvester {
     public void retrieveTedArticles() throws IOException {
 
         OpenOppsRestClient restClient = new OpenOppsRestClient(System.getProperty("openopps.user"),System.getProperty("openopps.pwd"));
-        SolrClient solrClient = new SolrClient("http://librairy.linkeddata.es/solr/documents");
+        SolrClient solrClient = new SolrClient(System.getProperty("solr.endpoint"));
 
         int maxDocs     = 2000;
         int minLength   = 1000;
@@ -104,7 +104,7 @@ public class OOAPIHarvester {
 
         try{
 
-            for (Integer year : Arrays.asList(2010,2011,2012,2013,2014)){
+            for (Integer year : Arrays.asList(2011,2012,2013,2014)){
 
                 String gt = year + "-01-01";
 

@@ -45,9 +45,7 @@ public class JRCAcquisHarvester {
 
     private static final String PATH              = "input/jrc";
 
-    String collection           = "http://librairy.linkeddata.es/solr/jrc";
-
-    String categoriesCollection = "http://librairy.linkeddata.es/solr/categories";
+    String categoriesCollection = "http://librairy.linkeddata.es/solr/eurovoc";
 
     private static final List<String> exclude     = Arrays.asList();
 
@@ -68,7 +66,7 @@ public class JRCAcquisHarvester {
 
         try{
 
-            SolrClient solrClient = new SolrClient(collection);
+            SolrClient solrClient = new SolrClient(System.getProperty("solr.endpoint"));
 
             solrClient.open();
 
@@ -158,9 +156,9 @@ public class JRCAcquisHarvester {
         GEO_THESAURUS.forEach(i -> excludedThesaurus.put(i,false));
 
 
-        String query = "source_s:jrc AND labels_t:[* TO *]";
+        String query = "source_s:jrc AND labels_t:[* TO *] AND lang_s:it";
 
-        SolrClient solrDocClient = new SolrClient(collection);
+        SolrClient solrDocClient = new SolrClient(System.getProperty("solr.endpoint"));
         SolrClient solrCatClient = new SolrClient(categoriesCollection);
 
         solrDocClient.open();

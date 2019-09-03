@@ -62,9 +62,7 @@ public class TEDHarvester {
     public void execute()  {
 
         try{
-
-
-            SolrClient solrClient = new SolrClient("http://librairy.linkeddata.es/solr/tbfy");
+            SolrClient solrClient = new SolrClient(System.getProperty("solr.endpoint"));
 
             solrClient.open();
 
