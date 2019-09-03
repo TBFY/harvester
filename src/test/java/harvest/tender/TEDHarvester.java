@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -42,7 +43,7 @@ public class TEDHarvester {
 
     private static final Logger LOG = LoggerFactory.getLogger(TEDHarvester.class);
 
-    private static final String PATH              = "input/ted";
+    private static final String PATH              = "/Users/cbadenes/Desktop/ted-sample/harvester/input/ted";
 
     private static final List<String> LANGUAGES   = Arrays.asList("en","es","fr","de");
 
@@ -65,9 +66,6 @@ public class TEDHarvester {
             SolrClient solrClient = new SolrClient(System.getProperty("solr.endpoint"));
 
             solrClient.open();
-
-            SimpleDateFormat TEDDATEFORMAT = new SimpleDateFormat("yyyyMMdd");
-            SimpleDateFormat ISO8601DATEFORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
             AtomicInteger counter = new AtomicInteger();
 
@@ -96,7 +94,13 @@ public class TEDHarvester {
 
                                 String dateVal = xml.select("DATE_PUB").text();
                                 Optional<Date> date = Optional.empty();
-                                if (!Strings.isNullOrEmpty(dateVal)) date = Optional.of(TEDDATEFORMAT.parse(dateVal));
+                                if (!Strings.isNullOrEmpty(dateVal)) {
+                                    try{
+                                        date = Optional.of(parseDate(dateVal));
+                                    }catch (Exception e){
+                                        LOG.info("error");
+                                    }
+                                }
 
                                 Elements forms = xml.select("FORM_SECTION").first().children();
 
@@ -120,7 +124,7 @@ public class TEDHarvester {
                                     }
                                     document.setLabels(labels);
 
-                                    if (date.isPresent()) document.setDate(ISO8601DATEFORMAT.format(date.get()));
+                                    if (date.isPresent()) document.setDate(formatISODate(date.get()));
 
                                     String title = form.select("TITLE").select("P").text();
                                     if (Strings.isNullOrEmpty(title)){
@@ -159,6 +163,16 @@ public class TEDHarvester {
             LOG.error("Error on test execution",e);
         }
 
+    }
+
+    private Date parseDate(String date) throws ParseException {
+        SimpleDateFormat pattern = new SimpleDateFormat("yyyyMMdd");
+        return pattern.parse(date);
+    }
+
+    private String formatISODate(Date date){
+        SimpleDateFormat ISO8601DATEFORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+        return ISO8601DATEFORMAT.format(date);
     }
 
 
