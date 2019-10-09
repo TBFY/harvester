@@ -2,6 +2,7 @@
 *.class
 target
 src/test/docker/data
+*secure
 
 # Corpora
 input/
