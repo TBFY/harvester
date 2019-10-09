@@ -1,12 +1,21 @@
-# harvester
+<p align="center"><img width=12.5% src="https://github.com/anfederico/Clairvoyant/blob/master/media/Logo.png"></p>
+<p align="center"><img width=60% src="https://github.com/anfederico/Clairvoyant/blob/master/media/Clairvoyant.png"></p>
 
-Download articles and legal documents on public procurement.
+![java](https://img.shields.io/badge/java-v1.8+-blue.svg)
+[![Build Status](https://travis-ci.org/TBFY/harvester.svg?branch=master)](https://travis-ci.org/TBFY/harvester)
+![Dependencies](https://img.shields.io/badge/dependencies-up%20to%20date-brightgreen.svg)
+[![GitHub Issues](https://img.shields.io/github/issues/TBFY/harvester.svg)](https://github.com/TBFY/harvester/issues)
+[![License](https://img.shields.io/badge/license-Apache2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
-## Features
-- Tender and contract data from a range of European government bodies from [OpenOpps](https://openopps.com) via [API](http://theybuyforyou.eu/openopps-api/) or Amazon-S3 bucket (*credentials are required*)
-- Legislative texts from the European Union generated between years 1958 and 2006 in 22 languages via [JRC-Acquis](https://ec.europa.eu/jrc/en/language-technologies/jrc-acquis) dataset.
-- Public procurement notices from the European Union via [TED](https://ted.europa.eu/) dataset.
-- All of them are indexed in [SOLR](http://lucene.apache.org/solr/) to perform complex queries and visualize results through [Banana](https://github.com/lucidworks/banana).
+
+## Basic Overview
+
+Download articles and legal documents from public procurement sources:
+- Tender and contract data of European government bodies from [OpenOpps](https://openopps.com) via [API](http://theybuyforyou.eu/openopps-api/) or Amazon-S3 bucket (*credentials are required*)
+- Legislative texts via [JRC-Acquis](https://ec.europa.eu/jrc/en/language-technologies/jrc-acquis) dataset.
+- Public procurement notices via [TED](https://ted.europa.eu/) dataset.
+
+And index them into [SOLR](http://lucene.apache.org/solr/) to perform complex queries and visualize results through [Banana](https://github.com/lucidworks/banana).
 
 ## Quick Start
 
@@ -28,3 +37,15 @@ Download articles and legal documents on public procurement.
 
 Take a look at all our harvesters here:  `src/test/java/harvest/`. 
 
+## Last Stable Release
+```python
+pip install clairvoyant
+```
+
+## Latest Development Changes
+```bash
+git clone https://github.com/TBFY/harvester.git
+```
+
+## Contributing
+Please take a look at our [contributing](https://github.com/TBFY/harvester/blob/master/CONTRIBUTING.md) guidelines if you're interested in helping!
