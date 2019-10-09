@@ -8,6 +8,8 @@
 [![Build Status](https://travis-ci.org/TBFY/harvester.svg?branch=master)](https://travis-ci.org/TBFY/harvester)
 [![GitHub Issues](https://img.shields.io/github/issues/TBFY/harvester.svg)](https://github.com/TBFY/harvester/issues)
 [![License](https://img.shields.io/badge/license-Apache2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+[![](https://jitpack.io/v/TBFY/harvester.svg)](https://jitpack.io/#TBFY/harvester)
+
 
 
 ## Basic Overview
