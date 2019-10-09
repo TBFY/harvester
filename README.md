@@ -9,7 +9,6 @@
 [![Release Status](https://jitci.com/gh/TBFY/harvester/svg)](https://jitci.com/gh/TBFY/harvester)
 [![GitHub Issues](https://img.shields.io/github/issues/TBFY/harvester.svg)](https://github.com/TBFY/harvester/issues)
 [![License](https://img.shields.io/badge/license-Apache2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
-[![](https://jitpack.io/v/TBFY/harvester.svg)](https://jitpack.io/#TBFY/harvester)
 
 
 
