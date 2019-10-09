@@ -20,7 +20,7 @@
 
   <groupId>es.upm.oeg.tbfy</groupId>
   <artifactId>harvester</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <packaging>jar</packaging>
   <name>TBFY Harvester</name>
   <description>Harvester for TBFY</description>
@@ -82,7 +82,7 @@
 				  <artifactId>jsoup</artifactId>
 				  <version>${jsoup.version}</version>
 			  </dependency>
-			 
+
 			  <dependency>
 				  <groupId>com.fasterxml.jackson.core</groupId>
 				  <artifactId>jackson-databind</artifactId>
@@ -118,13 +118,13 @@
 				  <groupId>com.google.guava</groupId>
 				  <artifactId>guava</artifactId>
 				  <version>${guava.version}</version>
-			  </dependency>			
+			  </dependency>
 			  <dependency>
 				  <groupId>commons-io</groupId>
 				  <artifactId>commons-io</artifactId>
 				  <version>${commons-io.version}</version>
 			  </dependency>
-			  
+
 			  <!-- Log Libraries -->
 			  <dependency>
 				  <groupId>ch.qos.logback</groupId>
@@ -245,7 +245,7 @@
 			  <groupId>commons-io</groupId>
 			  <artifactId>commons-io</artifactId>
 		  </dependency>
-		  
+
 		  <dependency>
 			  <groupId>com.fasterxml.jackson.core</groupId>
 			  <artifactId>jackson-databind</artifactId>
