@@ -23,7 +23,7 @@ And index them into [SOLR](http://lucene.apache.org/solr/) to perform complex qu
 
 ## Quick Start
 
-1. Install [Docker](https://docs.docker.com/install/) and [Docker-Compose](https://docs.docker.com/compose/install/) 
+1. Install [Docker](https://docs.docker.com/install/) and [Docker-Compose](https://docs.docker.com/compose/install/)
 1. Clone this repo
 
 	```
@@ -33,13 +33,13 @@ And index them into [SOLR](http://lucene.apache.org/solr/) to perform complex qu
 1. Run Solr and Banana by: `docker-compose up -d`
 1. You should be able to monitor the progress by: `docker-compose logs -f`
 1. A Solr Admin site should be available at: [http://localhost:8983/solr](http://localhost:8983/solr)
-1. Rename the configuration file: `src/test/resources/credentials.properties.sample` to `src/test/resources/credentials.properties` (*if you have credentials, update its content*) 
+1. Rename the configuration file: `src/test/resources/credentials.properties.sample` to `src/test/resources/credentials.properties` (*if you have credentials, update its content*)
 1. Download and extract TED articles from [ftp://guest:guest@ted.europa.eu/daily-packages/](ftp://guest:guest@ted.europa.eu/daily-packages/) and save them at: `input/ted`
 1. Move into base directory and run our harvester by: `./test TEDHarvester`
 1. A dashboard with results should be available at: [http://localhost:8983/solr/banana](http://localhost:8983/solr/banana)
 
 
-Take a look at all our harvesters here:  `src/test/java/harvest/`. 
+Take a look at all our harvesters here:  `src/test/java/harvest/`.
 
 ## Last Stable Release [![](https://jitpack.io/v/TBFY/harvester.svg)](https://jitpack.io/#TBFY/harvester)
 Step 1. Add the JitPack repository to your build file
@@ -61,4 +61,4 @@ Step 2. Add the dependency
 ```
 
 ## Contributing
-Please take a look at our [contributing](https://github.com/TBFY/harvester/blob/master/CONTRIBUTING.md) guidelines if you're interested in helping!
+Please take a look at our [contributing](https://github.com/TBFY/general/blob/master/guides/how-to-contribute.md) guidelines if you're interested in helping!
