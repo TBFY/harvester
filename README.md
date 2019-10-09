@@ -1,9 +1,10 @@
-<p align="center"><img width=12.5% src="https://github.com/anfederico/Clairvoyant/blob/master/media/Logo.png"></p>
-<p align="center"><img width=60% src="https://github.com/anfederico/Clairvoyant/blob/master/media/Clairvoyant.png"></p>
+<p align="center"><img width=12.5% src="https://github.com/TBFY/general/blob/master/figures/tbfy-logo.png"></p>
+<p align="center"><img width=60% src="https://github.com/TBFY/harvester/blob/master/logo.png"></p>
 
-![java](https://img.shields.io/badge/java-v1.8+-blue.svg)
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+![Java](https://img.shields.io/badge/java-v1.8+-blue.svg)
+![Maven](https://img.shields.io/badge/maven-v3.0+-blue.svg)
 [![Build Status](https://travis-ci.org/TBFY/harvester.svg?branch=master)](https://travis-ci.org/TBFY/harvester)
-![Dependencies](https://img.shields.io/badge/dependencies-up%20to%20date-brightgreen.svg)
 [![GitHub Issues](https://img.shields.io/github/issues/TBFY/harvester.svg)](https://github.com/TBFY/harvester/issues)
 [![License](https://img.shields.io/badge/license-Apache2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
@@ -38,11 +39,6 @@ And index them into [SOLR](http://lucene.apache.org/solr/) to perform complex qu
 Take a look at all our harvesters here:  `src/test/java/harvest/`. 
 
 ## Last Stable Release
-```python
-pip install clairvoyant
-```
-
-## Latest Development Changes
 ```bash
 git clone https://github.com/TBFY/harvester.git
 ```
