@@ -41,7 +41,7 @@ And index them into [SOLR](http://lucene.apache.org/solr/) to perform complex qu
 
 Take a look at all our harvesters here:  `src/test/java/harvest/`.
 
-## Last Stable Release [![](https://jitpack.io/v/TBFY/harvester.svg)](https://jitpack.io/#TBFY/harvester)
+## Lastest Stable Release [![](https://jitpack.io/v/TBFY/harvester.svg)](https://jitpack.io/#TBFY/harvester)
 Step 1. Add the JitPack repository to your build file
 ```xml
         <repositories>
